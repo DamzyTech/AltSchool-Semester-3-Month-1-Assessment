@@ -224,6 +224,7 @@ You must implement strict access controls for users and resources.
 ### CloudFront Distribution 
 **CloudFront URL**: `https://d13rd4wqzhfrng.cloudfront.net`
 
+<img width="960" height="504" alt="image" src="https://github.com/user-attachments/assets/802941d0-847a-4e8b-bbe4-0bd11b38cc47" />
 
 ---
 
@@ -325,7 +326,10 @@ Complete policy attached to `cloudlaunch-user`:
 ```
 
 ---
-
+## IAM USER CREDENTIALS
+- Console URL: https://431522527593.signin.aws.amazon.com/console
+- username: cloudlaunch-user
+- password: jeq&Qb8&
 
 ## 📊 Infrastructure Summary
 
