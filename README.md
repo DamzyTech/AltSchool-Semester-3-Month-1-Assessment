@@ -11,9 +11,8 @@ You must implement strict access controls for users and resources.
 
 - [Task 1: S3 Static Website + IAM](#task-1-s3-static-website--iam)
 - [Task 2: VPC Network Design](#task-2-vpc-network-design)
-- [Live Links](#live-links)
+- [Links](#links)
 - [IAM Policy](#iam-policy)
-- [Testing](#testing)
 
 ---
 
@@ -217,15 +216,14 @@ You must implement strict access controls for users and resources.
 
 ---
 
-## 🔗 Live Links
+## Links
 
 ### Static Website
-**S3 Website URL**: `http://cloudlaunch-site-bucket.s3-website-[region].amazonaws.com`
+**S3 Website URL**: `http://cloudlaunch-site-bucket-damzy.s3-website.eu-west-2.amazonaws.com`
 
-### CloudFront Distribution (Bonus)
-**CloudFront URL**: `https://[distribution-id].cloudfront.net`
+### CloudFront Distribution 
+**CloudFront URL**: `https://d13rd4wqzhfrng.cloudfront.net`
 
-*Replace placeholders with your actual URLs*
 
 ---
 
@@ -242,16 +240,16 @@ Complete policy attached to `cloudlaunch-user`:
             "Effect": "Allow",
             "Action": "s3:ListBucket",
             "Resource": [
-                "arn:aws:s3:::cloudlaunch-site-bucket",
-                "arn:aws:s3:::cloudlaunch-private-bucket",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket"
+                "arn:aws:s3:::cloudlaunch-site-bucket-damzy",
+                "arn:aws:s3:::cloudlaunch-private-bucket-damzy",
+                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy"
             ]
         },
         {
             "Sid": "GetObjectFromSiteBucket",
             "Effect": "Allow",
             "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::cloudlaunch-site-bucket/*"
+            "Resource": "arn:aws:s3:::cloudlaunch-site-bucket-damzy/*"
         },
         {
             "Sid": "GetPutObjectPrivateBucket",
@@ -260,7 +258,7 @@ Complete policy attached to `cloudlaunch-user`:
                 "s3:GetObject",
                 "s3:PutObject"
             ],
-            "Resource": "arn:aws:s3:::cloudlaunch-private-bucket/*"
+            "Resource": "arn:aws:s3:::cloudlaunch-private-bucket-damzy/*"
         },
         {
             "Sid": "VPCReadOnlyAccess",
@@ -286,12 +284,12 @@ Complete policy attached to `cloudlaunch-user`:
                 "s3:DeleteBucket"
             ],
             "Resource": [
-                "arn:aws:s3:::cloudlaunch-site-bucket",
-                "arn:aws:s3:::cloudlaunch-site-bucket/*",
-                "arn:aws:s3:::cloudlaunch-private-bucket",
-                "arn:aws:s3:::cloudlaunch-private-bucket/*",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket/*"
+                "arn:aws:s3:::cloudlaunch-site-bucket-damzy",
+                "arn:aws:s3:::cloudlaunch-site-bucket-damzy/*",
+                "arn:aws:s3:::cloudlaunch-private-bucket-damzy",
+                "arn:aws:s3:::cloudlaunch-private-bucket-damzy/*",
+                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy",
+                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy/*"
             ]
         },
         {
@@ -299,12 +297,12 @@ Complete policy attached to `cloudlaunch-user`:
             "Effect": "Deny",
             "Action": "s3:*",
             "NotResource": [
-                "arn:aws:s3:::cloudlaunch-site-bucket",
-                "arn:aws:s3:::cloudlaunch-site-bucket/*",
-                "arn:aws:s3:::cloudlaunch-private-bucket",
-                "arn:aws:s3:::cloudlaunch-private-bucket/*",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket/*"
+                "arn:aws:s3:::cloudlaunch-site-bucket-damzy",
+                "arn:aws:s3:::cloudlaunch-site-bucket-damzy/*",
+                "arn:aws:s3:::cloudlaunch-private-bucket-damzy",
+                "arn:aws:s3:::cloudlaunch-private-bucket-damzy/*",
+                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy",
+                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy/*"
             ]
         },
         {
@@ -328,45 +326,13 @@ Complete policy attached to `cloudlaunch-user`:
 
 ---
 
-## 🧪 Testing
-
-### Quick Verification Commands
-
-**Test S3 Access:**
-```bash
-# Configure AWS CLI
-aws configure --profile cloudlaunch-user
-
-# Test bucket listing
-aws s3 ls --profile cloudlaunch-user
-
-# Test file upload to private bucket
-echo "test" | aws s3 cp - s3://cloudlaunch-private-bucket/test.txt --profile cloudlaunch-user
-
-# Test file download
-aws s3 cp s3://cloudlaunch-private-bucket/test.txt - --profile cloudlaunch-user
-```
-
-**Test VPC Access:**
-```bash
-# List VPCs
-aws ec2 describe-vpcs --profile cloudlaunch-user
-
-# List subnets
-aws ec2 describe-subnets --profile cloudlaunch-user
-
-# Try to modify (should fail)
-aws ec2 create-tags --resources vpc-xxx --tags Key=Test,Value=Fail --profile cloudlaunch-user
-```
-
----
 
 ## 📊 Infrastructure Summary
 
 ### S3 Buckets Created:
-- ✅ `cloudlaunch-site-bucket` (Public website)
-- ✅ `cloudlaunch-private-bucket` (Private storage)
-- ✅ `cloudlaunch-visible-only-bucket` (Visible but not accessible)
+- ✅ `cloudlaunch-site-bucket-damzy` (Public website)
+- ✅ `cloudlaunch-private-bucket-damzy` (Private storage)
+- ✅ `cloudlaunch-visible-only-bucket-damzy` (Visible but not accessible)
 
 ### VPC Architecture:
 ```
@@ -385,6 +351,5 @@ cloudlaunch-vpc (10.0.0.0/16)
 
 ---
 
-**Project Completed**: [Date]  
-**Total Steps**: 37 steps across 2 main tasks  
-**AWS Services**: S3, IAM, VPC, EC2 (security groups), CloudFront (optional)
+**Project Completed**: 26-08-2025   
+**AWS Services**: S3, IAM, VPC, EC2 (security groups), CloudFront
