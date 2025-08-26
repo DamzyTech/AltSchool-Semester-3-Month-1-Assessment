@@ -1,208 +1,237 @@
-# CloudLaunch AWS Infrastructure Project
+# ALTSCHOOL CLOUD ENGINEERING SEMESTER 3 - MONTH 1 ASSESSMENT
 
-## 🚀 Project Overview
+## QUESTION
 
-CloudLaunch is a comprehensive AWS infrastructure project that demonstrates the implementation of secure cloud architecture using Amazon S3, IAM, and VPC services. This project showcases best practices for hosting static websites, managing user permissions, and designing scalable network infrastructure.
+You are working on a lightweight product called CloudLaunch, a platform that showcases a basic company website and stores some internal private documents. You are required to deploy it using AWS core services. This exercise demonstrates your understanding of AWS fundamentals, including S3, IAM, and VPCs.
+
+Your assessment consists of two main tasks: hosting a static site securely on S3 and designing a VPC network layout.
+You must implement strict access controls for users and resources.
 
 ## 📋 Table of Contents
 
-- [Task 1: Static Website Hosting with S3 + IAM](#task-1-static-website-hosting-with-s3--iam)
-- [Task 2: VPC Design for CloudLaunch Environment](#task-2-vpc-design-for-cloudlaunch-environment)
+- [Task 1: S3 Static Website + IAM](#task-1-s3-static-website--iam)
+- [Task 2: VPC Network Design](#task-2-vpc-network-design)
 - [Live Links](#live-links)
-- [IAM Policy Configuration](#iam-policy-configuration)
-- [Security Features](#security-features)
-- [Architecture Diagrams](#architecture-diagrams)
-- [Testing and Verification](#testing-and-verification)
-- [Future Enhancements](#future-enhancements)
+- [IAM Policy](#iam-policy)
+- [Testing](#testing)
 
-## Task 1: Static Website Hosting with S3 + IAM
+---
 
-### 🎯 Objective
-Create a secure, multi-tiered storage solution with a public static website and implement granular IAM permissions for controlled access.
+## Task 1: S3 Static Website + IAM
 
-### 📦 What We Accomplished
+### Step 1: Create S3 Buckets
 
-#### S3 Bucket Configuration
+**1.1 Create cloudlaunch-site-bucket (Public)**
+- Navigate to S3 Console
+- Create a bucket with the name `cloudlaunch-site-bucket-damzy`
+- Uncheck "Block all public access"
+- Acknowledge public access warning
+- Click "Create bucket"
 
-We successfully created three strategically designed S3 buckets, each serving a specific purpose:
+**1.2 Enable Static Website Hosting**
+- Go to the bucket Properties tab
+- Enable "Static website hosting"
+- Set index document: `index.html`
+- Save changes
 
-**1. cloudlaunch-site-bucket (Public Website)**
-- **Purpose**: Hosts our CloudLaunch static website
-- **Configuration**: 
-  - Static website hosting enabled
-  - Public read access for anonymous users
-  - Serves as the main entry point for our application
-- **Content**: A modern, responsive website showcasing CloudLaunch features
-- **Security**: Read-only access ensures content integrity while maintaining public accessibility
+**1.3 Add Bucket Policy for Public Access**
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Sid": "PublicReadGetObject",
+        "Effect": "Allow",
+        "Principal": "*",
+        "Action": "s3:GetObject",
+        "Resource": "arn:aws:s3:::cloudlaunch-site-bucket-damzy/*"
+    }]
+}
 
-**2. cloudlaunch-private-bucket (Secure Storage)**
-- **Purpose**: Stores sensitive application data and user uploads
-- **Configuration**:
-  - Completely private with no public access
-  - Accessible only through authenticated IAM users
-  - Supports both read and write operations for authorized users
-- **Use Case**: Perfect for storing user documents, configuration files, and application backups
 
-**3. cloudlaunch-visible-only-bucket (Metadata Storage)**
-- **Purpose**: Demonstrates advanced IAM permission control
-- **Configuration**:
-  - Users can see the bucket exists (ListBucket permission)
-  - No access to actual file contents (no GetObject permission)
-  - Useful for storing metadata or system information that should be visible but not readable
+```
 
-#### Static Website Features
+**1.4 Create cloudlaunch-private-bucket**
+- Create a bucket with the name `cloudlaunch-private-bucket-damzy`
+- Keep "Block all public access" checked
+- Click "Create bucket"
 
-Our CloudLaunch website includes:
+**1.5 Create cloudlaunch-visible-only-bucket**
+- Create bucket with name `cloudlaunch-visible-only-bucket-damzy`
+- Keep "Block all public access" checked
+- Click "Create bucket"
 
-- **Modern Design**: Gradient backgrounds, glassmorphism effects, and smooth animations
-- **Responsive Layout**: Works perfectly on desktop, tablet, and mobile devices
-- **Interactive Elements**: Hover effects, smooth scrolling, and dynamic content
-- **Feature Showcase**: Six key features highlighting CloudLaunch capabilities:
-  - 🚀 Quick Deployment
-  - 🔒 Secure by Default
-  - 📈 Auto Scaling
-  - 🛠️ Developer Tools
-  - 🌍 Global Reach
-  - 💡 Expert Support
+<img width="690" height="414" alt="image" src="https://github.com/user-attachments/assets/f06e1b6f-7023-49e5-9284-62520b078755" />
 
-#### IAM User Implementation
 
-**User Created**: `cloudlaunch-user`
+### Step 2: Upload Website Content
 
-**Permission Strategy**: We implemented a principle of least privilege with precise access control:
+**2.1 Create Website Files**
+- Create `index.html` with CloudLaunch website content
+- Upload to `cloudlaunch-site-bucket-damzy`
+- Test website URL from bucket properties
 
-- **S3 Access Patterns**:
-  - Can list all three buckets (visibility for management)
-  - Read-only access to the public website bucket
-  - Full read/write access to the private bucket (no delete permissions)
-  - Can see but cannot access the visible-only bucket contents
-  - No access to any other S3 buckets in the account
+### Step 3: Create IAM User
 
-- **Security Boundaries**:
-  - Explicit deny policies prevent privilege escalation
-  - No delete permissions anywhere (data protection)
-  - Bucket access restricted to only the three specified buckets
+**3.1 Create User**
+- Navigate to IAM Console → Users
+- Click "Create user"
+- Username: `cloudlaunch-user`
+- Set password
+- Click "Create user"
 
-## Task 2: VPC Design for CloudLaunch Environment
+**3.2 Create Custom IAM Policy**
+- Go to IAM → Policies
+- Click "Create policy"
+- Use JSON editor with the policy below
+- Name: `CloudLaunch-User-S3-Policy`
+- Create policy
 
-### 🎯 Objective
-Design and implement a secure, scalable network infrastructure that supports future application expansion with proper isolation and security controls.
+**3.3 Attach Policy to User**
+- Go to Users → `cloudlaunch-user`
+- Click "Add permissions" → "Attach policies directly"
+- Select `CloudLaunch-User-S3-Policy`
+- Add permissions
+<img width="943" height="415" alt="image" src="https://github.com/user-attachments/assets/0cd9df6c-5d69-4660-8e94-5713d961cda9" />
+---
 
-### 🏗️ Network Architecture
+## Task 2: VPC Network Design
 
-#### VPC Foundation
+### Step 4: Create VPC
 
-**cloudlaunch-vpc (10.0.0.0/16)**
-- **Address Space**: Provides 65,536 IP addresses for massive scalability
-- **Region**: Deployed in a single AWS region for optimal latency
-- **Design Philosophy**: Three-tier architecture supporting web, application, and database layers
+**4.1 Create Main VPC**
+- Navigate to VPC Console
+- Click "Create VPC"
+- Choose "VPC only"
+- Name: `cloudlaunch-vpc`
+- IPv4 CIDR: `10.0.0.0/16`
+- Create VPC
 
-#### Subnet Design
+### Step 5: Create Subnets
 
-Our subnet strategy implements network segmentation best practices:
+**5.1 Create Public Subnet**
+- Go to Subnets → "Create subnet"
+- VPC: `cloudlaunch-vpc`
+- Name: `cloudlaunch-public-subnet`
+- CIDR: `10.0.1.0/24`
+- Choose availability zone, e.g., eu-west-1a
+- Create subnet
 
-**1. Public Subnet (10.0.1.0/24)**
-- **IP Range**: 256 IP addresses (10.0.1.1 - 10.0.1.254)
-- **Purpose**: Hosts internet-facing resources like load balancers, NAT gateways
-- **Connectivity**: Direct internet access through Internet Gateway
-- **Future Use**: Application Load Balancers, bastion hosts, public-facing services
-- **Availability Zone**: Strategically placed for high availability
+**5.2 Create Application Subnet**
+- Create subnet
+- VPC: `cloudlaunch-vpc`
+- Name: `cloudlaunch-app-subnet`
+- CIDR: `10.0.2.0/24`
+- Choose a different availability zone, e.g., eu-west-1b
+- Create subnet
 
-**2. Application Subnet (10.0.2.0/24)**
-- **IP Range**: 256 IP addresses (10.0.2.1 - 10.0.2.254)
-- **Purpose**: Private subnet for application servers and business logic
-- **Security**: No direct internet access, protected from external threats
-- **Communication**: Can communicate with other VPC subnets
-- **Future Use**: EC2 instances running web applications, API servers, microservices
-- **Availability Zone**: Different from public subnet for fault tolerance
+**5.3 Create Database Subnet**
+- Create subnet
+- VPC: `cloudlaunch-vpc`
+- Name: `cloudlaunch-db-subnet`
+- CIDR: `10.0.3.0/28`
+- Choose a third availability zone, e.g., eu-west-1c
+- Create subnet
 
-**3. Database Subnet (10.0.3.0/28)**
-- **IP Range**: 14 IP addresses (10.0.3.1 - 10.0.3.14)
-- **Purpose**: Highly secure subnet for database servers
-- **Size Rationale**: Smaller subnet as databases typically need fewer instances
-- **Security**: Most restrictive access, isolated from internet
-- **Future Use**: RDS instances, ElastiCache, database replicas
-- **Availability Zone**: Third AZ for database high availability
+<img width="958" height="391" alt="image" src="https://github.com/user-attachments/assets/ce4c826b-a9aa-4b0a-aa42-908154c2a50f" />
 
-#### Internet Connectivity
 
-**Internet Gateway: cloudlaunch-igw**
-- **Attachment**: Connected to cloudlaunch-vpc
-- **Function**: Enables internet access for public subnet resources
-- **Scalability**: Horizontally scalable and highly available by default
-- **Security**: Only accessible from public subnet through route table configuration
+### Step 6: Create Internet Gateway
 
-#### Routing Strategy
+**6.1 Create IGW**
+- Go to Internet Gateways
+- Click "Create internet gateway"
+- Name: `cloudlaunch-igw`
+- Create an internet gateway
 
-We implemented a sophisticated routing strategy that provides internet access where needed while maintaining security:
+**6.2 Attach to VPC**
+- Select the IGW
+- Actions → "Attach to VPC"
+- Select `cloudlaunch-vpc`
+- Attach internet gateway
+<img width="960" height="386" alt="image" src="https://github.com/user-attachments/assets/252433c5-3bd7-447c-9faa-58146195bfab" />
 
-**1. Public Route Table (cloudlaunch-public-rt)**
-- **Internet Route**: 0.0.0.0/0 → cloudlaunch-igw
-- **Local Route**: 10.0.0.0/16 → local (automatic)
-- **Association**: cloudlaunch-public-subnet
-- **Purpose**: Enables bidirectional internet communication
+### Step 7: Configure Route Tables
 
-**2. Application Route Table (cloudlaunch-app-rt)**
-- **Local Route**: 10.0.0.0/16 → local (automatic)
-- **Internet Access**: None (completely private)
-- **Association**: cloudlaunch-app-subnet
-- **Security Benefit**: Prevents accidental internet exposure
+**7.1 Create Public Route Table**
+- Go to Route Tables
+- Click "Create route table"
+- Name: `cloudlaunch-public-rt`
+- VPC: `cloudlaunch-vpc`
+- Create route table
 
-**3. Database Route Table (cloudlaunch-db-rt)**
-- **Local Route**: 10.0.0.0/16 → local (automatic)
-- **Internet Access**: None (maximum security)
-- **Association**: cloudlaunch-db-subnet
-- **Security Benefit**: Highest level of isolation
+**7.2 Add Internet Route**
+- Select `cloudlaunch-public-rt`
+- Routes tab → "Edit routes"
+- Add route: `0.0.0.0/0` → `cloudlaunch-igw`
+- Save changes
 
-#### Security Group Configuration
+**7.3 Associate Public Subnet**
+- Subnet associations tab
+- "Edit subnet associations"
+- Select `cloudlaunch-public-subnet`
+- Save associations
 
-**1. Application Security Group (cloudlaunch-app-sg)**
-- **Inbound Rules**:
-  - HTTP (port 80) from VPC CIDR (10.0.0.0/16)
-  - Allows load balancer communication from public subnet
-  - Internal application communication within VPC
-- **Outbound Rules**: Default (all outbound traffic allowed)
-- **Use Case**: Protects application servers while allowing necessary communication
+**7.4 Create Application Route Table**
+- Create route table: `cloudlaunch-app-rt`
+- VPC: `cloudlaunch-vpc`
+- Associate with `cloudlaunch-app-subnet`
+- Do NOT add internet route
 
-**2. Database Security Group (cloudlaunch-db-sg)**
-- **Inbound Rules**:
-  - MySQL (port 3306) from Application Subnet only (10.0.2.0/24)
-  - Highly restrictive access pattern
-  - Prevents any direct database access from internet or public subnet
-- **Outbound Rules**: Default (allows responses to inbound connections)
-- **Security Philosophy**: Database isolation with application-only access
+**7.5 Create Database Route Table**
+- Create route table: `cloudlaunch-db-rt`
+- VPC: `cloudlaunch-vpc`
+- Associate with `cloudlaunch-db-subnet`
+- Do NOT add internet route
+<img width="960" height="392" alt="image" src="https://github.com/user-attachments/assets/f62635c0-069a-4b55-8235-b087217cfcf3" />
+### Step 8: Create Security Groups
 
-#### IAM VPC Permissions
+**8.1 Create Application Security Group**
+- Go to Security Groups
+- Click "Create security group"
+- Name: `cloudlaunch-app-sg`
+- VPC: `cloudlaunch-vpc`
+- Add inbound rule: HTTP (80) from `10.0.0.0/16`
+- Create security group
 
-Enhanced the `cloudlaunch-user` with comprehensive VPC read-only access:
+**8.2 Create Database Security Group**
+- Create security group
+- Name: `cloudlaunch-db-sg`
+- VPC: `cloudlaunch-vpc`
+- Add inbound rule: MySQL (3306) from `10.0.2.0/24`
+- Create security group
+<img width="959" height="392" alt="image" src="https://github.com/user-attachments/assets/40c83ff9-ade0-4569-9980-53d4f3d7e396" />
 
-- **VPC Visibility**: Can view VPC configuration and status
-- **Subnet Information**: Access to subnet details, CIDR blocks, and availability zones
-- **Route Table Access**: Can view routing configuration (but not modify)
-- **Security Group Visibility**: Can see security group rules and associations
-- **Internet Gateway Information**: Can view IGW status and attachments
-- **Modification Prevention**: Explicit deny on all create, modify, and delete operations
+### Step 9: IAM Permissions
+
+**9.1 Create VPC Policy**
+- Go to IAM → Policies
+- Create policy: `CloudLaunch-VPC-ReadOnly-Policy`
+- Add VPC read-only permissions
+- Create policy
+
+**9.2 Attach to User**
+- Go to Users → `cloudlaunch-user`
+- Add permissions → Attach policies
+- Select `CloudLaunch-VPC-ReadOnly-Policy`
+- Add permissions
+
+---
 
 ## 🔗 Live Links
 
 ### Static Website
 **S3 Website URL**: `http://cloudlaunch-site-bucket.s3-website-[region].amazonaws.com`
-> Replace `[region]` with your actual AWS region (e.g., us-east-1)
 
-### CloudFront Distribution (Optional)
+### CloudFront Distribution (Bonus)
 **CloudFront URL**: `https://[distribution-id].cloudfront.net`
-> If you implemented the bonus CloudFront distribution, replace `[distribution-id]` with your actual CloudFront distribution ID
 
-**Benefits of CloudFront Integration**:
-- HTTPS encryption for secure communication
-- Global edge locations for reduced latency
-- Built-in DDoS protection
-- Caching for improved performance
-- Custom domain support
+*Replace placeholders with your actual URLs*
 
-## 🔐 IAM Policy Configuration
+---
 
-The following JSON policy provides comprehensive access control for the `cloudlaunch-user`:
+## 🔐 IAM Policy
+
+Complete policy attached to `cloudlaunch-user`:
 
 ```json
 {
@@ -297,168 +326,65 @@ The following JSON policy provides comprehensive access control for the `cloudla
 }
 ```
 
-### Policy Explanation
+---
 
-**Permission Breakdown**:
+## 🧪 Testing
 
-1. **ListSpecificBucketsOnly**: Allows the user to see the contents of our three specific buckets
-2. **GetObjectFromSiteBucket**: Read-only access to the public website files
-3. **GetPutObjectPrivateBucket**: Full read/write access to the private bucket (excluding delete)
-4. **VPCReadOnlyAccess**: Comprehensive read-only access to VPC components
-5. **DenyDeleteOperations**: Explicit prevention of any delete operations on S3 resources
-6. **DenyAccessToOtherBuckets**: Ensures user cannot access any other S3 buckets
-7. **DenyVPCModifications**: Prevents any modifications to VPC infrastructure
+### Quick Verification Commands
 
-## 🛡️ Security Features
+**Test S3 Access:**
+```bash
+# Configure AWS CLI
+aws configure --profile cloudlaunch-user
 
-### Defense in Depth Strategy
+# Test bucket listing
+aws s3 ls --profile cloudlaunch-user
 
-**Network Level Security**:
-- VPC isolation from internet (private subnets)
-- Security groups acting as virtual firewalls
-- Route table controls preventing unwanted internet access
-- Subnet segmentation for different application tiers
+# Test file upload to private bucket
+echo "test" | aws s3 cp - s3://cloudlaunch-private-bucket/test.txt --profile cloudlaunch-user
 
-**Access Control Security**:
-- IAM policies with least privilege principle
-- Explicit deny policies preventing privilege escalation
-- Granular permissions for different resource types
-- No delete permissions to prevent data loss
-
-**Data Protection**:
-- Private S3 buckets with no public access
-- Encryption in transit (HTTPS with CloudFront)
-- Bucket policies restricting access patterns
-- Version control capabilities (can be enabled)
-
-## 📊 Architecture Diagrams
-
-### Network Architecture
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    cloudlaunch-vpc (10.0.0.0/16)           │
-├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │   Public Subnet │  │  Application    │  │   Database   │ │
-│  │  (10.0.1.0/24)  │  │    Subnet       │  │    Subnet    │ │
-│  │                 │  │  (10.0.2.0/24)  │  │(10.0.3.0/28)│ │
-│  │  ┌───────────┐  │  │                 │  │              │ │
-│  │  │    IGW    │  │  │  ┌───────────┐  │  │  ┌────────┐  │ │
-│  │  │           │◄─┼──┼──┤    ALB    │  │  │  │   RDS  │  │ │
-│  │  └───────────┘  │  │  └───────────┘  │  │  └────────┘  │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
-└─────────────────────────────────────────────────────────────┘
+# Test file download
+aws s3 cp s3://cloudlaunch-private-bucket/test.txt - --profile cloudlaunch-user
 ```
 
-### S3 Storage Architecture
+**Test VPC Access:**
+```bash
+# List VPCs
+aws ec2 describe-vpcs --profile cloudlaunch-user
+
+# List subnets
+aws ec2 describe-subnets --profile cloudlaunch-user
+
+# Try to modify (should fail)
+aws ec2 create-tags --resources vpc-xxx --tags Key=Test,Value=Fail --profile cloudlaunch-user
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    CloudLaunch S3 Storage                   │
-├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │  Site Bucket    │  │  Private Bucket │  │ Visible-Only │ │
-│  │   (Public)      │  │   (Private)     │  │   Bucket     │ │
-│  │                 │  │                 │  │  (Private)   │ │
-│  │  Static Website │  │  User Files     │  │  Metadata    │ │
-│  │  HTML/CSS/JS    │  │  App Data       │  │  System Info │ │
-│  │                 │  │  Backups        │  │              │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## 🧪 Testing and Verification
-
-### Automated Testing Scripts
-
-We've provided comprehensive testing scripts to verify all functionality:
-
-**S3 Permissions Test**: Verifies bucket access patterns and permission boundaries
-**VPC Configuration Test**: Confirms network setup and IAM read-only access
-**Security Boundary Test**: Ensures denied operations are properly blocked
-
-### Manual Testing Checklist
-
-- [ ] Static website loads correctly in browser
-- [ ] CloudFront distribution serves content over HTTPS (if configured)
-- [ ] IAM user can list all three buckets
-- [ ] IAM user can read from public bucket
-- [ ] IAM user can read/write to private bucket
-- [ ] IAM user cannot access visible-only bucket contents
-- [ ] IAM user cannot delete any S3 objects
-- [ ] IAM user can view VPC components
-- [ ] IAM user cannot modify VPC infrastructure
-
-## 🚀 Future Enhancements
-
-### Phase 1 Enhancements
-- **SSL Certificate**: Add custom domain with AWS Certificate Manager
-- **CDN Optimization**: Advanced CloudFront caching strategies
-- **Monitoring**: CloudWatch dashboards for S3 and VPC metrics
-- **Backup Strategy**: S3 cross-region replication for disaster recovery
-
-### Phase 2 Scalability
-- **Multi-AZ Deployment**: Expand subnets across multiple availability zones
-- **NAT Gateway**: Add NAT gateway for outbound internet access from private subnets
-- **VPC Peering**: Connect to other VPCs for multi-environment architectures
-- **Transit Gateway**: Implement for complex network topologies
-
-### Phase 3 Advanced Features
-- **EC2 Deployment**: Deploy actual application servers in the VPC
-- **RDS Implementation**: Deploy managed databases in the database subnet
-- **ELB Integration**: Add Application Load Balancers in the public subnet
-- **Auto Scaling**: Implement auto-scaling groups for high availability
-
-### Phase 4 Enterprise Features
-- **AWS WAF**: Web Application Firewall for advanced security
-- **GuardDuty**: Threat detection and security monitoring
-- **Config Rules**: Automated compliance checking
-- **Organizations**: Multi-account governance and security
-
-## 📈 Project Benefits
-
-### Business Value
-- **Cost Optimization**: Pay-as-you-go model with no upfront costs
-- **Scalability**: Infrastructure that grows with business needs
-- **Global Reach**: CloudFront enables worldwide content delivery
-- **Security**: Enterprise-grade security controls and compliance
-
-### Technical Benefits
-- **High Availability**: Multi-AZ architecture for fault tolerance
-- **Performance**: CDN integration for fast content delivery
-- **Maintainability**: Clear separation of concerns and documented architecture
-- **Flexibility**: Modular design supporting future enhancements
-
-## 📞 Support and Maintenance
-
-### Monitoring Recommendations
-- Set up CloudWatch alarms for S3 storage usage
-- Monitor VPC flow logs for security analysis
-- Track CloudFront performance metrics
-- Implement billing alerts for cost management
-
-### Regular Maintenance Tasks
-- Review IAM policies quarterly for security compliance
-- Update S3 lifecycle policies for cost optimization
-- Rotate access keys and review user permissions
-- Test disaster recovery procedures
 
 ---
 
-## 📄 Conclusion
+## 📊 Infrastructure Summary
 
-The CloudLaunch project successfully demonstrates a comprehensive AWS infrastructure implementation that combines static website hosting, granular access control, and secure network design. This architecture provides a solid foundation for scalable web applications while maintaining the highest security standards.
+### S3 Buckets Created:
+- ✅ `cloudlaunch-site-bucket` (Public website)
+- ✅ `cloudlaunch-private-bucket` (Private storage)
+- ✅ `cloudlaunch-visible-only-bucket` (Visible but not accessible)
 
-The project showcases best practices in:
-- **Security**: Multi-layered security approach with least privilege access
-- **Scalability**: Architecture designed for growth and expansion
-- **Maintainability**: Well-documented and clearly structured components
-- **Cost-Effectiveness**: Optimized resource usage with pay-as-you-go model
+### VPC Architecture:
+```
+cloudlaunch-vpc (10.0.0.0/16)
+├── Public Subnet (10.0.1.0/24) → Internet Gateway
+├── App Subnet (10.0.2.0/24) → Private
+└── DB Subnet (10.0.3.0/28) → Private
+```
 
-This infrastructure is production-ready and can serve as a template for similar projects requiring secure, scalable cloud architecture.
+### Security Groups:
+- ✅ `cloudlaunch-app-sg` (HTTP from VPC)
+- ✅ `cloudlaunch-db-sg` (MySQL from app subnet)
+
+### IAM User:
+- ✅ `cloudlaunch-user` with limited S3 and VPC read-only permissions
 
 ---
 
-**Project Created**: [Current Date]  
-**AWS Services Used**: S3, IAM, VPC, EC2, CloudFront  
-**Architecture Type**: Three-tier web application infrastructure  
-**Security Model**: Defense in depth with IAM and network controls
+**Project Completed**: [Date]  
+**Total Steps**: 37 steps across 2 main tasks  
+**AWS Services**: S3, IAM, VPC, EC2 (security groups), CloudFront (optional)
