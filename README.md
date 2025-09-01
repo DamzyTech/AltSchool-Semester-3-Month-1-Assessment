@@ -234,94 +234,18 @@ Complete policy attached to `cloudlaunch-user`:
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "ListSpecificBucketsOnly",
-            "Effect": "Allow",
-            "Action": "s3:ListBucket",
-            "Resource": [
-                "arn:aws:s3:::cloudlaunch-site-bucket-damzy",
-                "arn:aws:s3:::cloudlaunch-private-bucket-damzy",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy"
-            ]
-        },
-        {
-            "Sid": "GetObjectFromSiteBucket",
-            "Effect": "Allow",
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::cloudlaunch-site-bucket-damzy/*"
-        },
-        {
-            "Sid": "GetPutObjectPrivateBucket",
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject",
-                "s3:PutObject"
-            ],
-            "Resource": "arn:aws:s3:::cloudlaunch-private-bucket-damzy/*"
-        },
-        {
-            "Sid": "VPCReadOnlyAccess",
-            "Effect": "Allow",
-            "Action": [
-                "ec2:DescribeVpcs",
-                "ec2:DescribeSubnets",
-                "ec2:DescribeRouteTables",
-                "ec2:DescribeInternetGateways",
-                "ec2:DescribeSecurityGroups",
-                "ec2:DescribeNetworkAcls",
-                "ec2:DescribeAvailabilityZones",
-                "ec2:DescribeRegions"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "DenyDeleteOperations",
-            "Effect": "Deny",
-            "Action": [
-                "s3:DeleteObject",
-                "s3:DeleteObjectVersion",
-                "s3:DeleteBucket"
-            ],
-            "Resource": [
-                "arn:aws:s3:::cloudlaunch-site-bucket-damzy",
-                "arn:aws:s3:::cloudlaunch-site-bucket-damzy/*",
-                "arn:aws:s3:::cloudlaunch-private-bucket-damzy",
-                "arn:aws:s3:::cloudlaunch-private-bucket-damzy/*",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy/*"
-            ]
-        },
-        {
-            "Sid": "DenyAccessToOtherBuckets",
-            "Effect": "Deny",
-            "Action": "s3:*",
-            "NotResource": [
-                "arn:aws:s3:::cloudlaunch-site-bucket-damzy",
-                "arn:aws:s3:::cloudlaunch-site-bucket-damzy/*",
-                "arn:aws:s3:::cloudlaunch-private-bucket-damzy",
-                "arn:aws:s3:::cloudlaunch-private-bucket-damzy/*",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy",
-                "arn:aws:s3:::cloudlaunch-visible-only-bucket-damzy/*"
-            ]
-        },
-        {
-            "Sid": "DenyVPCModifications",
-            "Effect": "Deny",
-            "Action": [
-                "ec2:Create*",
-                "ec2:Delete*",
-                "ec2:Modify*",
-                "ec2:Associate*",
-                "ec2:Disassociate*",
-                "ec2:Attach*",
-                "ec2:Detach*",
-                "ec2:Replace*"
-            ],
-            "Resource": "*"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowListBuckets",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListAllMyBuckets",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "*"
+    }
+  ]
 }
 ```
 
@@ -329,7 +253,7 @@ Complete policy attached to `cloudlaunch-user`:
 ## IAM USER CREDENTIALS
 - Console URL: https://431522527593.signin.aws.amazon.com/console
 - username: cloudlaunch-user
-- password: jeq&Qb8&
+- password: q_B69+K9
 
 ## 📊 Infrastructure Summary
 
